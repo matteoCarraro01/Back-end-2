@@ -31,9 +31,11 @@ const gameschema = new mongoose.Schema({
     image: { type: String },
     description: { type: String },
     genre: { type: String },
+    comments: [CommentSchema]
+
 }, { timestamps: true });
 
-const Game = mongoose.model('Game', gameschema);
+const Game = mongoose.model('game', gameschema);
 
 
 export default Game;

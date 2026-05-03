@@ -1,19 +1,17 @@
-import express from 'express';
-import { findAll, findById, create, getCancel, update } from '../controllers/comments.js';
-import { authentication } from '../middleware/authentication.js';
+import express from "express";
+import { getReviews, createReview, deleteReview } from "../controllers/comments.js";
+
+const router = express.Router();
+
+router.get("/games/:gameId/reviews", getReviews);
+router.post("/games/:gameId/reviews", createReview);
+router.delete("/games/:gameId/reviews/:reviewId", deleteReview);
 
 
 
-const commentsRouter = express.Router();
 
 
-
-
-commentsRouter.get('/games/:GameId/comments', findAll);
-commentsRouter.get('/games/:GameId/comments/:id', findById);
-commentsRouter.post('/games/:GameId/comments', authentication, create);
-commentsRouter.delete('/games/:GameId/comments/:id', getCancel);
-commentsRouter.put('/games/:GameId/comments/:id', update);
+export default router;
 
 
 
@@ -27,5 +25,3 @@ commentsRouter.put('/games/:GameId/comments/:id', update);
 
 
 
-
-export default commentsRouter;

@@ -2,133 +2,71 @@ import Game from "../models/Games.js";
 import mongoose from "mongoose";
 
 
-export async function findAll(req, res) {
+export async function getReviews(req, res) {
     try {
-        const { GameId } = req.params;
-        console.log(req.params)
-        if (!mongoose.Types.ObjectId.isValid(GameId)) {
-            return res.status(400).json({ message: 'invalid Game id' })
+        const { gameId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(gameId)) {
+            return res.status(400).json({ message: "Invalid game id" });
         }
-        const post = await Game.findById(GameId);
-        if (!post) {
-            return res.status(404).json({
-                message: 'Game not found'
-            })
+
+        const game = await Game.findById(gameId);
+
+        if (!game) {
+            return res.status(404).json({ message: "game not found" });
         }
-        res.status(200).json(post.comments);
+
+        res.status(200).json(game.comments);
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({ message: error.message });
     }
 }
 
-export async function findById(req, res) {
+
+export async function createReview(req, res) {
     try {
-        const { GameId, id } = req.params;
+        const { gameId } = req.params;
+        const { text, author, rating } = req.body;
 
-        if (!mongoose.Types.ObjectId.isValid(GameId)) {
-            return res.status(400).json({ message: 'invalid Game id' })
-        }
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ message: 'invalid comment id' })
-        }
-        const Game = await Game.findById(GameId);
-        if (!Game) {
-            return res.status(404).json({
-                message: 'Game not found'
-            })
-        }
-        const comment = Game.comments.id(id);
-        if (!comment) {
-            return res.status(404).json({
-                message: 'comment not found'
-            })
-        };
-        res.status(200).json(comment);
+        const game = await Game.findById(gameId);
 
-    } catch (error) {
-        res.status(500).json({ message: error.message })
-    }
-}
-
-export async function getCancel(req, res) {
-    try {
-        const { GameId, id } = req.params;
-        if (!mongoose.Types.ObjectId.isValid(GameId)) {
-            return res.status(400).json({ message: 'invalid Game id' });
-        }
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ message: 'invalid comment id' });
+        if (!game) {
+            return res.status(404).json({ message: "game not found" });
         }
 
-        const Game = await Game.findById(GameId);
-        if (!Game) {
-            return res.status(404).json({
-                message: 'Game not found'
-            });
-        }
-        const comment = Game.comments.id(id);
-        if (!comment) {
-            return res.status(404).json({
-                message: 'comment not found'
-            })
-        };
-        comment.deleteOne();
-        await Game.save();
-        res.status(200).json({ message: 'comment deleted' });
-
-    } catch (error) {
-        res.status(500).json({ message: error.message })
-    }
-}
-
-export async function create(req, res) {
-    try {
-        const { GameId } = req.params;
-        if (!mongoose.Types.ObjectId.isValid(GameId)) {
-            return res.status(400).json({ message: 'invalid Game id' })
-        }
-        const { text, author } = req.body;
-        const post = await Game.findById(GameId);
-        if (!post) {
-            return res.status(404).json({ message: 'Game not found' });
-        }
-        post.comments.push({
+        const newReview = {
             text,
-            author
-        })
-        await post.save();
-        res.status(201).json(post.comments[post.comments.length - 1]);
+            author,
+            rating
+        };
+
+        game.comments.push(newReview);
+        await game.save();
+
+        res.status(201).json(newReview);
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({ message: error.message });
     }
 }
 
-export async function update(req, res) {
-    try {
-        const { GameId, id } = req.params;
-        const { text, author } = req.body;
-        if (!mongoose.Types.ObjectId.isValid(GameId)) {
-            return res.status(400).json({ message: 'invalid Game id' });
-        };
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ message: 'invalid comment id' });
-        };
-        const Game = await Game.findById(GameId);
-        if (!Game) return res.status(404).json({
-            message: 'Game not found'
-        });
-        const comment = Game.comments.id(id);
-        if (!comment) {
-            return res.status(404).json({
-                message: 'comment not found'
-            })
-        };
-        comment.text = text;
-        comment.author = author;
-        await Game.save();
-        res.status(200).json(comment);
 
+export async function deleteReview(req, res) {
+    try {
+        const { gameId, reviewId } = req.params;
+
+        const game = await Game.findById(gameId);
+
+        const review = game.comments.id(reviewId);
+
+        if (!review) {
+            return res.status(404).json({ message: "Review not found" });
+        }
+
+        review.deleteOne();
+        await game.save();
+
+        res.status(200).json({ message: "Review deleted" });
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({ message: error.message });
     }
 }
