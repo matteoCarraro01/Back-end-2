@@ -26,7 +26,10 @@ export async function getReviews(req, res) {
 export async function createReview(req, res) {
     try {
         const { gameId } = req.params;
-        const { text, author, rating } = req.body;
+
+
+        console.log("BODY:", req.body);
+        const { text, username, rating } = req.body;
 
         const game = await Game.findById(gameId);
 
@@ -34,17 +37,22 @@ export async function createReview(req, res) {
             return res.status(404).json({ message: "game not found" });
         }
 
+
+
         const newReview = {
             text,
-            author,
-            rating
+            username,
+            rating: Number(rating),
         };
+
+        console.log("NEW REVIEW", newReview);
 
         game.comments.push(newReview);
         await game.save();
 
-        res.status(201).json(newReview);
+        res.status(201).json(game);
     } catch (error) {
+        console.log("ERROR:", error)
         res.status(500).json({ message: error.message });
     }
 }
@@ -55,6 +63,10 @@ export async function deleteReview(req, res) {
         const { gameId, reviewId } = req.params;
 
         const game = await Game.findById(gameId);
+
+        if (!game) {
+            return res.status(404).json({ message: "game not found" });
+        }
 
         const review = game.comments.id(reviewId);
 

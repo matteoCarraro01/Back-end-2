@@ -8,7 +8,17 @@ const CommentSchema = new mongoose.Schema({
         minLength: 1,
         maxLength: 300
     },
-    author: String,
+    username: {
+        type: String,
+        required: true
+
+    },
+    rating: {
+        type: Number,
+        min: 1,
+        max: 5,
+        required: true
+    }
 
 },
     {
@@ -31,7 +41,8 @@ const gameschema = new mongoose.Schema({
     image: { type: String },
     description: { type: String },
     genre: { type: String },
-    comments: [CommentSchema]
+    comments: [CommentSchema],
+    defautlt: []
 
 }, { timestamps: true });
 
