@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 
 export async function login(req, res) {
     try {
-        const { email, password } = req.body;
+        const { username, email, password } = req.body;
         let userLog = await Author.findOne({ email: email });
         console.log("USER TROVATO", userLog)
         if (!userLog) {
@@ -41,7 +41,13 @@ export async function login(req, res) {
                     });
                 } else {
                     res.json({
-                        token: jwtToken
+                        token: jwtToken,
+
+                        user: {
+                            id: userLog._id,
+                            username: userLog.username,
+                            email: userLog.email,
+                        }
                     });
                 }
 
@@ -56,23 +62,33 @@ export async function login(req, res) {
     }
 }
 
-export async function register(req, res) {
+export const register = async (req, res) => {
     try {
-        const { name, surname, birthDate, avatar, email, password } = req.body;
+        const { username, email, password } = req.body;
+const existingUser = await Author.findOne({email});
 
+if (existingUser) {
+    return res.status(400).json({
+        message: "Utente già esistente",
+    });
+}
 
         const newUser = new Author({
-            name,
-            surname,
-            birthDate,
-            avatar,
+            username,
             email,
             password
         });
 
         await newUser.save()
 
-        res.status(201).send({ message: "User created" });
+        res.status(201).json({
+            message: "User created",
+        user: {
+            email: newUser.email,
+            username: newUser.username,
+            id: newUser._id,
+        },
+     });
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: error.message })

@@ -3,16 +3,24 @@ import bcrypt from "bcrypt";
 
 
 const AuthorSchema = new mongoose.Schema({
-    name: String,
-    surname: String,
-    email: {
-        type: String,
-        require: true,
-        unique: true
-    },
-    birthDate: String,
-    avatar: String,
-    password: String
+   username: {
+    type: String,
+    required: true,
+    unique: true
+   },
+
+   email: {
+    type: String,
+    required: true,
+    unique: true
+   },
+
+   password: {
+    type: String,
+    required: true
+   },
+
+   avatar: String,
 
 });
 
