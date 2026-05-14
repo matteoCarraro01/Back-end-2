@@ -13,8 +13,8 @@ const gameRouter = express.Router();
 gameRouter.get('/', findAll);
 gameRouter.get('/:id', findById);
 gameRouter.post('/', authentication, createPost);
-gameRouter.delete('/:id', remove);
-gameRouter.put('/:id', update);
+gameRouter.delete('/:id', authentication, remove);
+gameRouter.put('/:id', authentication, update);
 gameRouter.patch('/:id/cover', parser.single('avatar'), uploadGameAvatar);
 
 
