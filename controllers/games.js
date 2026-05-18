@@ -38,13 +38,13 @@ export async function findById(req, res) {
 
 export async function createPost(req, res) {
     try {
+
+        console.log(req.authUser)
         const { title, price, image, description, genre } =
             req.body
         const game = new Game({ title, price, image, description, genre });
         const newgame = await game.save();
 
-        // const newPost = new game(req.body) (sconsigliato per via della poca sicurezza informatica);
-        // const saved = await newPost.save();
 
         res.status(201).json(newgame);
     } catch (error) {
