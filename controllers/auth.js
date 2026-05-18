@@ -27,6 +27,7 @@ export async function login(req, res) {
         }
         jwt.sign({
             id: userLog.id,
+            role: userLog.role,
 
 
         },
@@ -47,6 +48,7 @@ export async function login(req, res) {
                             id: userLog._id,
                             username: userLog.username,
                             email: userLog.email,
+                            role: userLog.role,
                         }
                     });
                 }

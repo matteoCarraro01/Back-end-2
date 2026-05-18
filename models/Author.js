@@ -22,6 +22,12 @@ const AuthorSchema = new mongoose.Schema({
 
    avatar: String,
 
+   role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user"
+   }
+
 });
 
 
