@@ -1,8 +1,7 @@
 export const adminOnly = (req, res, next) => {
 
-    console.log(req.authUSer)
-    console.log(req.authUSer.role)
-
+    console.log(req.authUSer);
+    
     if (!req.authUser || req.authUser.role !== "admin") {
 
         return res.status(403).json({
@@ -11,4 +10,4 @@ export const adminOnly = (req, res, next) => {
     }
 
     next();
- }
+ };
